@@ -3,6 +3,7 @@ package goquery
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -21,7 +22,7 @@ func TextWithTag(nodes []*html.Node) string {
 			case "img":
 				for _, v := range n.Attr {
 					if v.Key == "src" {
-						buf.WriteString(fmt.Sprintf(`<img src="%v">`, v.Val))
+						buf.WriteString(fmt.Sprintf(`<img src="%v">`, strings.TrimPrefix(v.Val, "//")))
 					}
 				}
 			}
