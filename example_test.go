@@ -1,4 +1,4 @@
-package goquery_test
+package goquery
 
 import (
 	"fmt"
@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/PuerkitoBio/goquery"
+	"testing"
 )
 
 // This example scrapes the reviews shown on the home page of metalsucks.net.
-func Example() {
+func TestExample(t *testing.T) {
 	// Request the HTML page.
-	res, err := http.Get("http://metalsucks.net")
+	// res, err := http.Get("https://finance.sina.com.cn/stock/stockptd/2020-05-13/doc-iircuyvi2920672.shtml")
+	res, err := http.Get("https://finance.sina.com.cn/stock/jsy/2020-05-14/doc-iircuyvi3071692.shtml")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,23 +23,14 @@ func Example() {
 	}
 
 	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	doc, err := NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Find the review items
-	doc.Find(".sidebar-reviews article .content-block").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the band and title
-		band := s.Find("a").Text()
-		title := s.Find("i").Text()
-		fmt.Printf("Review %d: %s - %s\n", i, band, title)
-	})
-	// To see the output of the Example while running the test suite (go test), simply
-	// remove the leading "x" before Output on the next line. This will cause the
-	// example to fail (all the "real" tests should pass).
-
-	// xOutput: voluntarily fail the Example output.
+	// log.Println(strings.TrimPrefix(TextWithTag(doc.Find(".article").Nodes), TextWithTag(doc.Find(".ct_hqimg").Nodes)))
+	// log.Println(strings.TrimPrefix(TextWithTag(doc.Find(".article").Nodes), TextWithTag(doc.Find("blockquote").Nodes)))
+	log.Println(TextWithTag(doc.Find(".article").Nodes))
+	log.Println()
 }
 
 // This example shows how to use NewDocumentFromReader from a file.
@@ -50,7 +41,7 @@ func ExampleNewDocumentFromReader_file() {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	doc, err := goquery.NewDocumentFromReader(f)
+	doc, err := NewDocumentFromReader(f)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +62,7 @@ func ExampleNewDocumentFromReader_string() {
 	</body>
 </html>`
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(data))
+	doc, err := NewDocumentFromReader(strings.NewReader(data))
 	if err != nil {
 		log.Fatal(err)
 	}

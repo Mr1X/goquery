@@ -15,10 +15,23 @@ func TextWithTag(nodes []*html.Node) string {
 	// Slightly optimized vs calling Each: no single selection object created
 	var f func(*html.Node)
 	f = func(n *html.Node) {
+		// 注释的部分
+		if n.Type == html.CommentNode {
+			return
+		}
+
+		if n.Parent.Data == "style" {
+			return
+		}
+
+		data := strings.TrimSpace(n.Data)
+
+		// log.Infof("n.Type:%v n.Data:[%v]", n.Type, data)
+
 		if n.Type != html.TextNode {
 			switch n.Data {
 			case "p":
-				buf.WriteString("<p>")
+				buf.WriteString("\n<p>")
 			case "img":
 				for _, v := range n.Attr {
 					if v.Key == "src" {
@@ -28,7 +41,8 @@ func TextWithTag(nodes []*html.Node) string {
 			}
 
 		} else {
-			buf.WriteString(n.Data)
+			// buf.WriteString(n.Data)
+			buf.WriteString(data)
 		}
 
 		if n.FirstChild != nil {
@@ -47,5 +61,5 @@ func TextWithTag(nodes []*html.Node) string {
 		f(n)
 	}
 
-	return buf.String()
+	return strings.TrimPrefix(buf.String(), "\n")
 }
