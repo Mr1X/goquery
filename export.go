@@ -94,7 +94,11 @@ func TextWithAllTag(nodes []*html.Node) string {
 			case "img":
 				for _, v := range n.Attr {
 					if v.Key == "src" {
-						buf.WriteString(fmt.Sprintf(`<img src="%v">`, v.Val))
+						img := v.Val
+						if strings.HasPrefix(img, "//") {
+							img = strings.Replace(img, "//", "https://", 1)
+						}
+						buf.WriteString(fmt.Sprintf(`<img src="%v">`, img))
 					}
 				}
 			default:

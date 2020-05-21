@@ -36,7 +36,7 @@ func TestTextWithTag(t *testing.T) {
 }
 
 func TestTextWithAllTag(t *testing.T) {
-	res, err := http.Get("https://finance.sina.com.cn/stock/stockptd/2020-05-13/doc-iircuyvi2920672.shtml")
+	res, err := http.Get("https://finance.sina.com.cn/wm/2020-05-21/doc-iircuyvi4252783.shtml")
 	// res, err := http.Get("https://finance.sina.com.cn/stock/jsy/2020-05-14/doc-iircuyvi3071692.shtml")
 	if err != nil {
 		log.Fatal(err)
