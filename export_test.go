@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func TestTextOnlyPImg(t *testing.T) {
-	link := "https://finance.sina.com.cn/stock/stockptd/2020-05-13/doc-iircuyvi2920672.shtml"
+func TestTextWithBr(t *testing.T) {
+	link := "https://www.roadshowchina.cn/Home/Meet/detail.html?mid=8170"
 	rsp, err := http.Get(link)
 	if err != nil {
 		log.Fatal(err)
@@ -23,7 +23,7 @@ func TestTextOnlyPImg(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	content := TextOnlyPImg(doc.Find(".article").Nodes)
+	content := TextWithBr(doc.Find("body").Nodes)
 
 	log.Printf("content:[%v]", content)
 }
