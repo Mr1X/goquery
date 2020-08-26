@@ -350,6 +350,76 @@ func TextWithAllTag(nodes []*html.Node) string {
 	return buf.String()
 }
 
+// TextWithAllTagV2 query text and retain all tag and return imgs
+func TextWithAllTagV2(nodes []*html.Node) (string, []string) {
+	var buf bytes.Buffer
+	imgs := []string{}
+
+	// Slightly optimized vs calling Each: no single selection object created
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		// 注释的部分
+		if n.Type == html.CommentNode {
+			return
+		}
+
+		if n.Parent.Data == "style" {
+			return
+		}
+
+		data := strings.TrimSpace(n.Data)
+
+		// log.Infof("n.Type:%v n.Data:[%v]", n.Type, data)
+
+		if n.Type != html.TextNode {
+			switch n.Data {
+			case "img":
+				img := ""
+				for _, v := range n.Attr {
+					if v.Key == "src" && img == "" {
+						img = v.Val
+						if strings.HasPrefix(img, "//") {
+							img = strings.Replace(img, "//", "https://", 1)
+						}
+					}
+					if v.Key == "real_src" {
+						img = v.Val
+						if strings.HasPrefix(img, "//") {
+							img = strings.Replace(img, "//", "https://", 1)
+						}
+					}
+				}
+				imgs = append(imgs, img)
+				buf.WriteString(fmt.Sprintf(`<img src="%v">`, img))
+			default:
+				buf.WriteString("<" + n.Data + ">")
+			}
+
+		} else {
+			buf.WriteString(data)
+		}
+
+		if n.FirstChild != nil {
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				f(c)
+			}
+		}
+		if n.Type != html.TextNode {
+			switch n.Data {
+			case "img":
+				return
+			default:
+				buf.WriteString("</" + n.Data + ">")
+			}
+		}
+	}
+	for _, n := range nodes {
+		f(n)
+	}
+
+	return buf.String(), imgs
+}
+
 // TextSimple query text
 func TextSimple(nodes []*html.Node) string {
 	var buf bytes.Buffer
