@@ -301,7 +301,8 @@ func TextWithAllTag(nodes []*html.Node) string {
 			return
 		}
 
-		if n.Parent.Data == "style" {
+		switch n.Parent.Data {
+		case "style", "script":
 			return
 		}
 
